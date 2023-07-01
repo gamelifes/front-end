@@ -1,0 +1,34 @@
+@charset "utf-8";
+/* CSS Document */
+/*全站共用样式*/
+body,html{ width:100%; font-size:10px; -webkit-text-size-adjust:none; color:#1f1f1f; font-family:"苹方","思源黑体","微软雅黑","宋体", "新宋体", Arial; background:#ffffff; float:left; padding: 0; margin: 0; overflow-x: hidden;}
+img{ border:0;}
+ul,li,dl,dt,dd{ margin:0; padding:0; list-style: none;}
+h1,h2,h3,h4,h5,h6,p,dt,dl,dd,p,input{ margin:0; padding:0;}
+em,i{ font-style:normal;}
+input,button,select,textarea{ outline:none;}
+input,button,select,textarea{ resize:none;}
+*:focus{outline: none;}
+a{color:#333333; text-decoration:none;}
+a:link,a:visited{ color:#1f1f1f; text-decoration:none; outline: 0;}
+a:hover,a:active{ color:#00b8b0; text-decoration:none; outline: 0;}
+.none{ display: none;}
+.font12{font-size:1.2rem;}
+.font14{font-size:1.4rem;}
+.font18{font-size:1.8rem;}
+.left{float:left;}
+.right{float:right;}
+
+
+
+/*#body{ width: 94%; height: auto; float: left; margin-left: 3%; }*/
+#body{ width: 100%; max-width: 46rem; height: auto; margin: 0 auto; }
+#web{ width: 100%; max-width: 46rem; height: auto; margin: 0 auto;}
+
+/*清除苹果手机样式*/
+input[type=button], input[type=submit], input[type=file], button { cursor: pointer; -webkit-appearance: none; }
+
+
+
+
+

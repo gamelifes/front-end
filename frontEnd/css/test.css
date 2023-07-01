@@ -1,0 +1,70 @@
+/* 
+    MARK:商品1号
+*/
+#home {
+  width: 100%;
+  overflow: hidden;
+  background-color: #f4d000;
+  background-image: url(../images/130415122F5-12.jpg);
+  background-position: top center;
+  background-size: cover;
+  background-attachment: fixed;
+  padding: 4.4% 0 4.6% 0;
+}
+#home .icon-text {
+  height: auto;
+  padding: 80px 10px 0 10px;
+}
+#home .icon-text #textSvg .clipPath5 {
+  x: 100;
+  font-size: 200px;
+}
+#home .icon-text #textSvg image {
+  width: 100%;
+  animation: iconshow 2s ease forwards;
+}
+#home .chackPhone {
+  height: auto;
+}
+#home .chackPhone h1 {
+  width: 100%;
+  line-height: 120px;
+  text-align: center;
+  font-family: faktos, Montserrat, Arial, sans-serif;
+}
+#home .chackPhone .search {
+  width: 37px;
+  color: #000;
+  cursor: pointer;
+  float: right;
+  padding: 0 10% 0 0;
+}
+#home .chackPhone .search #searchSvg .cirDone {
+  r: 3px;
+}
+#home .chackPhone .search #searchSvg .active {
+  animation: cirMove 500ms ease forwards;
+}
+#home .chackPhone .tel {
+  width: 60%;
+  border: 0 solid antiquewhite;
+  border-radius: 50px;
+  color: #000;
+  text-indent: 25px;
+  box-shadow: 3px 5px 10px antiquewhite;
+  line-height: 38px;
+  margin: 0 0 0 15%;
+}
+/* 
+    MARK:商品2号
+*/
+#PreNext {
+  width: 100%;
+  overflow: hidden;
+  background-color: #748271;
+  background-image: url(../images/123945-14969831856c4d.jpg);
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+  padding: 10.4% 0 5.6% 0;
+}

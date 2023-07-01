@@ -1,0 +1,23 @@
+                     <!--MarkDown:
+                    M = moveto
+                    L = lineto
+                    H = horizontal lineto //水平线
+                    V = vertical lineto   //垂直线
+                    C = curveto           //三次贝塞尔曲线 
+                    S = smooth curveto    //平滑三次贝塞尔曲线 
+                    Q = quadratic Bézier curve //二次贝塞尔曲线 
+                    T = smooth quadratic Bézier curveto //平滑
+                    A = elliptical Arc    //椭圆弧 
+                    Z = closepath         //关闭路径
+                    大写绝对定位，小写相对定位
+                    多个贝塞尔曲线连接的话，为了保证连接点的光滑（前缀smooth） T前面是Q或者T指令的时候，后面的T指令的控制点会默认设置为前面的曲线的控制点的映射点，
+                  -->
+
+                 
+        
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" class="circle-bar-svg"  id="circle-bar-svg" >
+         
+                <circle cx="150" cy="75" r="50" stroke="black" stroke-width="2" fill="red" />
+                <path fill="none" d="M 0 75 l 100 0 A 25 25 0 1 0 200 75 t 100 0 l 0 75 T 120 150 l -120 0 z" stroke="#000" stroke-width="5"></path>     
+            
+         </svg>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chart-demo</title>
+
+    <style>
+      h1{
+        width: 100%;
+        text-align: center;
+      }
+        #top{
+            width: 100px;
+            height:30px;
+            background-color: antiquewhite;
+            border: 1px solid blue;
+            margin-left: 10px;
+        }
+        #chartList{
+          display: flex ;
+         
+          display: -webkit-flex;
+          justify-content: space-between;
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        #canvas{
+            height:300px;
+            margin: 100px 0 0 10px;
+        }
+        #p-can{
+            width: 100%;
+            height: 560px;
+            padding-bottom: 10px;
+            margin-top: 10px;
+            position:relative;
+            overflow: auto;
+        }
+
+        #img-size {
+            width: 100%;
+            height: 100%;
+            background: url("src/Images/130415122F5-12.jpg") no-repeat;
+            background-size: 100%;
+            flex: content-box;
+            margin: 10px 0 0 0;
+
+
+        }
+        #stap{
+          width: 100%;
+          height: 100%;
+          margin-top: 10px;
+           background: #232323;
+        }
+        #oChart{
+          width:500px;
+          height: 100%;
+          margin-top: 10px;
+
+        }
+       </style>
+<script type="javascript" >
+
+
+
+
+</script>
+
+<script type="text/javascript" src="DoughnutChart.js"></script>
+<script type="text/javascript" src="caChart.js" value="1.0.0"></script>
+</head>
+
+<body>
+<div id="chartList">
+  <h1>图表模板</h1>
+  <div>
+    <canvas id="canvas">你的浏览器不支持HTML5 canvas </canvas>
+  </div>
+  <div id="my_container" >
+    <canvas id="pie_canvas">你的浏览器不支持HTML5 canvas </canvas>
+  </div>
+  <div>
+    <canvas id="chart"> 你的浏览器不支持HTML5 canvas </canvas>
+  </div>
+</div>
+
+
+
+<script type="javascript">
+
+    // function animal(name ,color,spa) {
+    //     return {
+    //         name:name,
+    //         color:color,
+    //         spa:spa
+    //
+    //     }
+    // }
+    function animal(){
+
+        this.spa ="animal";
+
+    }
+   function cat(name, color){
+       // animal.apply(this,arguments);
+        this.name = name;
+        this.color = color;
+
+    }
+   //
+   cat.prototype.eat = function () {
+        alert("dog")
+    }
+   //  cat.prototype = new animal();
+   //  cat.prototype.constructor = cat;
+    function extend(Child,Parent) {
+
+        Child.prototype = new Parent();
+
+        Child.prototype.constructor = Child;
+        Child.uber = Parent.prototype;
+    }
+    extend(cat,animal);
+    var cat = new cat("aa","bb");
+    console.log(cat.name);
+    console.log(cat.spa);
+    console.log("spa" in cat);
+
+
+
+</script>
+ 
+
+</body>
+<script>  
+window.onload= function(){
+ var chartData = [{name:"apples", value:0.4, color:"#FF00aa",label1:"描述31",label2:"20ee0元"},  
+                      {name:"orange", value:0.04, color:"#FF0011",label1:"描述32",label2:"20rrr0元"},  
+                   {name:"banana", value:0.3, color:"#2dc6c8",label1:"描述4",label2:"200tt元"},  
+                    {name:"peaches", value:0.06, color:"#5ab1ee",label1:"描述54gty465wfsdgfsf",label2:"20ttafrgrtrtwterte0q元"}, 
+	{name:"strawberries", value:0.2, color:"#d7797f",label1:"描述56",label2:"20ww0元"}]  
+var config2 = {  
+            	width : 500,   
+           	 height: 500,   
+	series:chartData,   
+	chartCanvasID:"pie_canvas",
+               callback:function(obj){
+                     console.log(obj.label1);
+               }
+      };  
+    
+       nutChart.initSettings(config2);
+       nutChart.render()
+
+       var data = [{
+            "value": .2,
+            "color": "#64b3f4",
+            "title": "大专"
+        },{
+            "value": .4,
+            "color": "#88d3ce",
+            "title": "本科"
+        },{
+            "value": .3,
+            "color":"#9be15d",
+            "title": "硕士"
+        },{
+            "value": .1,
+            "color":   "#F578DC",
+            "title": "博士"
+        }];
+        function getStyle(obj, attr) {
+        var ie = !+"\v1"; //简单判断ie6~8
+        if (attr == "backgroundPosition") { //IE6~8不兼容backgroundPosition写法，识别backgroundPositionX/Y
+            if (ie) {
+                return obj.currentStyle.backgroundPositionX + " " + obj.currentStyle.backgroundPositionY;
+            }
+        }
+        if (obj.currentStyle) {
+            return obj.currentStyle[attr];
+        } else {
+            return document.defaultView.getComputedStyle(obj, null)[attr];
+        }
+    }
+//圆饼图
+const canvas2 = {
+  init () {
+    this.el = document.createElement('canvas')
+    this.el .style.border = '0 solid #ffffff';
+    this.el.setAttribute("id","oChart");
+    chartList.appendChild(this.el)
+    this.resize()
+    window.addEventListener('resize', () => this.resize(), false)
+    this.ctx = this.el.getContext('2d')
+    return this.ctx
+  },
+  onResize (callback) {
+    this.resizeCallback = callback
+  },
+  resize () {
+    this.width =  this.el.width = parseInt(getStyle(this.el,"width")) / 2
+    this.height = this.el.height =  parseInt(getStyle(this.el,"height")) / 2
+    console.log("aa"+ parseInt(getStyle(this.el,"width")))
+    // this.el.style.width = this.el.width + 'px'
+    // this.el.style.height = this.el.height + 'px'
+      //定义起始角度    
+     this.tempAngle=90
+     //定圆心位置
+    this.x0=30
+    this.y0=30
+     //定半径长度
+    this.radius=30;
+  
+    this.ctx = this.el.getContext('2d')
+
+    this.ctx.scale(2,2)
+    this.resizeCallback && this.resizeCallback()
+  },
+  run (callback) {
+    requestAnimationFrame(() => {
+      this.run(callback)
+    })
+    callback(this.ctx)
+  }
+}
+
+
+
+const ctx = canvas2.init()
+
+
+class Circle {
+  constructor (cavans2, data){
+    this.canvas2 = canvas2
+    this.data = data
+    this.resize()
+  }
+  resize () {
+    this.width = canvas2.width*2
+    this.height = canvas2.height*2
+     this.tempAngle=canvas2.tempAngle
+     //定圆心位置
+    this.x0=canvas2.x0
+    this.y0=canvas2.y0
+     //定半径长度
+    this.radius=canvas2.radius
+  }
+  
+  draw (ctx) {
+                
+   //从-90度开始绘制         
+        for(var i=0; i<data.length; i++){
+           ctx.beginPath();
+           ctx.moveTo(this.x0, this.y0);
+	
+            //当前扇形角度
+            var angle = data[i].value*360;
+            //当前扇形起始绘制弧度
+            var startAngle = this.tempAngle*Math.PI/180;
+            //当前扇形借结束绘制弧度
+            var endAngle = ( this.tempAngle + angle)*Math.PI/180;
+
+            //绘制扇形
+            ctx.arc(this.x0,this.y0, this.radius,startAngle,endAngle);
+            //填充扇形
+           ctx.fillStyle = data[i].color;
+            ctx.fill()
+            //当前扇形结束绘制角度，即下一个扇形开始绘制角度
+          this.tempAngle += angle;
+        }
+ ctx.closePath()
+  }
+}
+  
+let objects = []
+
+const init = () => {
+  objects = []
+  objects.push(new Circle())
+}
+
+
+init()
+
+let tick = 0
+canvas2.run(ctx => {
+  ctx.clearRect(0, 0, canvas2.width, canvas2.height)
+
+  objects.forEach(obj => {
+    obj.draw(ctx)     
+  })
+})
+
+canvas2.onResize(() => {
+  init()
+})
+
+const canvas = {
+  init () {
+    this.ele = document.createElement('canvas')
+    this.ele.setAttribute("id","stap");
+    chartList.appendChild(this.ele)
+    this.resize()
+    window.addEventListener('resize', () => this.resize(), false)
+    this.ctx = this.ele.getContext('2d')
+    return this.ctx
+  },
+  onResize (callback) {
+    this.resizeCallback = callback
+  },
+  resize () {
+    this.width = this.ele.width = this.ele.offsetWidth
+    this.height = this.ele.height = this.ele.offsetHeight
+    this.resizeCallback && this.resizeCallback()
+  },
+  run (callback) {
+    requestAnimationFrame(() => {
+      this.run(callback)
+    })
+    callback(this.ctx)
+  }
+}
+
+const ctx1 = canvas.init()
+
+class Wave {
+  constructor (cavans, options) {
+    this.canvas = canvas
+    this.options = options
+    this.xMove = this.options.offset
+    this.xSpeed = this.options.xSpeed
+    this.resize()
+  }
+  resize () {
+    this.width = canvas.width
+    this.height = canvas.height
+    this.amplitude = this.canvas.height * this.options.amplitude
+  }
+  
+  draw (ctx) {
+    ctx.beginPath()
+    this.xMove += this.xSpeed
+    ctx.moveTo(0, this.height / 3)//创建起点
+    var grad = ctx.createLinearGradient(0, 0, this.width, 0);
+    grad.addColorStop(0, this.options.start);
+    grad.addColorStop(1, this.options.stop);
+    ctx.strokeStyle = grad
+    ctx.lineWidth = this.options.lineWidth
+    for (let x = 0; x < this.width; x++) {
+      const radians = x / this.width * Math.PI * 2
+      const scale = (Math.sin(radians - Math.PI * 0.5) + 1) * 0.5
+      const y = Math.sin(x * 0.05 + this.xMove) * this.amplitude * scale + this.height / 2
+      ctx.lineTo(x, y)//创建新点，从起点到画布中最后指定点的位置
+    }
+    ctx.stroke()//绘画路径线条
+    ctx.closePath()
+  }
+}
+
+const gradients = [
+  ['#6e45e2', '#88d3ce'],
+  ['#de6262', '#ffb88c'],
+  ['#64b3f4', '#c2e59c'],
+  ['#0fd850', '#f9f047'],
+  ['#007adf', '#00ecbc'],
+  ['#B6CEE8', '#F578DC'],
+  ['#9be15d', '#00e3ae']
+]
+
+function valueMapping (x, inMin, inMax, outMin, outMax) {
+  return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
+let waves = []
+
+const init2 = () => {
+  waves = []
+  for (let i = 0; i < 2; i++) {
+    const [start, stop] = gradients[Math.floor(Math.random() * gradients.length)]
+    waves.push(new Wave(canvas, {
+      start,
+      stop,
+      lineWidth: 1,
+      xSpeed: valueMapping(Math.random(), 0, 1, -0.05, -0.08),
+      amplitude: valueMapping(Math.random(), 0, 1, 0.05, 0.5),
+      offset: Math.random() * 100
+    }))
+  }
+}
+
+document.addEventListener('click', () => {
+  init2()
+})
+
+init2()
+
+canvas.run(ctx => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  waves.forEach(wave => {
+    wave.draw(ctx)    
+  })
+})
+
+canvas.onResize(() => {
+  init()
+});
+
+ 
+   
+var config = {  
+            width : 500,   
+            height: 500,  
+            data: chartData, 
+	series:chartData,   
+            canvas: canvas,   
+                title:"Fruit Sales",
+	chartCanvasId:"chart",
+	
+               callback:function(obj){
+                     console.log(obj.label1);
+               }
+      };  
+  caChart.goChart(config);  
+
+ }
+
+    </script>  
+
+
+
+<script type="text/javascript" src="age.js"></script>
+</html>

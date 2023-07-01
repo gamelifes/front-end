@@ -1,0 +1,160 @@
+body {
+    font-size: 16px;
+}
+
+.allIn {
+    padding: 0 15px 0 15px;
+}
+
+.slogan {
+    width: 100%;
+    height: auto;
+    padding-top: 4rem;
+}
+
+    .slogan span p em {
+        width: 100%;
+        height: auto;
+    }
+
+    .slogan span {
+        color: #000000;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .slogan p {
+        margin: 10px 0 0 0;
+    }
+
+    .slogan b {
+        font-size: 12px;
+        margin: 3px 0 0 0;
+    }
+
+.grayFont {
+    color: #808080;
+    font-size: 10px;
+    font-weight: 200;
+    display: block;
+    height: 12px;
+    width: 100%;
+}
+
+.slogan em {
+    margin-top: 3px;
+}
+
+.input_Tel {
+    width: 100%;
+    height: auto;
+    margin-top: 4rem;
+}
+
+    .input_Tel input[type=tel] {
+        width: 100%;
+        height: 2rem;
+        font-size: 20px;
+        border: 0;
+        border-bottom: 1px solid #303030;
+    }
+
+.tip {
+    width: 100%;
+    height: auto;
+    margin-top: 4px;
+    color: #ff0101;
+    font-size: 8px;
+    opacity: 0;
+}
+
+.anima {
+    animation: myfirst 3s;
+}
+
+@keyframes myfirst {
+
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.btn_Extent {
+    width: 100%;
+    height: 36px;
+    margin-top: 4rem;
+}
+
+.btn_Next {
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #ff0000;
+    border: 0 solid;
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+}
+
+.goPreView {
+    width: 100%;
+    height: auto;
+    margin-top: 6px;
+    color: #808080;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+    .goPreView em {
+        padding: 0 5px 0 0;
+    }
+
+.input_code {
+    width: 80%;
+    display: flex;
+    margin: 20% 10% 0 auto;
+    height: 2.5rem;
+}
+
+.code {
+    width: 12%;
+    height: 2rem;
+    font-size: 26px;
+    border: 0;
+    border-bottom: 1px solid #c8c8c8;
+    margin: 0 2% 0 2%;
+    text-align: center;
+}
+
+    .code:focus {
+        border: 1px solid #fff6b3;
+    }
+
+.code_tip {
+    width: 80%;
+    margin: 0 0 0 12%;
+}
+
+.getCode {
+    width: 100%;
+    text-align: center;
+    margin: 10% 0 0 0;
+    font-size: 10px;
+}
+
+.btn_set {
+    border: none;
+    background: #ffffff;
+    color: #808080;
+}
+
+.on {
+    display: block;
+}
+
+.off {
+    display: none;
+}

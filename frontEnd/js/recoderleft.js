@@ -1,0 +1,307 @@
+
+class Recoder {
+    constructor(sampleRate) {
+        this.leftDataList = []
+        this.rightDataList = []
+        this.mediaPlayer = null
+        this.audioContext = null
+        this.source = null
+        this.sampleRate = sampleRate || 44100
+    }
+    //MARK:1.拿到录音权限
+
+    startRecord() {
+        return new Promise((resolve, reject) => {
+            window.navigator.mediaDevices.getUserMedia({
+                audio: {
+                    sampleRate: 8000, // 采样率
+                    channelCount: 1, // 声道
+                    audioBitsPerSecond: 64,
+                    volume: 1.0, // 音量
+                    autoGainControl: true
+                }
+            }).then(mediaStream => {
+
+                console.log(mediaStream, 'mediaStream')
+                this.mediaPlayer = mediaStream
+                this.beginRecord(mediaStream)
+                resolve()
+            }).catch(err => {
+                // 如果用户电脑没有麦克风设备或者用户拒绝了，或者连接出问题了等
+                // 这里都会抛异常，并且通过err.name可以知道是哪种类型的错误
+                console.error(err)
+                this.log("无法打开麦克风，异常信息:NotAllowedError")
+                reject(err)
+            })
+        })
+    }
+    /*MARK:2.新建一个 AudioContext对象
+    
+    1.创建 mediaNode 来操作mediaStream
+    2.创建 jsNode 获取实时录音的流（直接处理）
+    3.jsNode连接硬件设备
+    4.录音时数据收集  （单声道）
+    5.mediaNode连接jsNode*/
+
+    beginRecord(mediaStream) {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+        if (!window.AudioContext) {
+            alert('当前浏览器不支持Web Audio API');
+            return;
+        }
+
+        let audioContext = new window.AudioContext()
+        // mediaNode包含 mediaStream，audioContext
+        let mediaNode = audioContext.createMediaStreamSource(mediaStream)
+        console.log(mediaNode, 'mediaNode')
+        // 创建一个jsNode
+        // audioContext.sampleRate = 8000
+        console.log(audioContext, 'audioContext')
+        let jsNode = this.createJSNode(audioContext)
+        console.log(jsNode, 'jsnode')
+        // 需要连到扬声器消费掉outputBuffer，process回调才能触发
+        // 并且由于不给outputBuffer设置内容，所以扬声器不会播放出声音
+        jsNode.connect(audioContext.destination)
+        jsNode.onaudioprocess = this.onAudioProcess.bind(this)
+        // 把mediaNode连接到jsNode
+        mediaNode.connect(jsNode)
+        this.audioContext = audioContext
+    }
+
+    onAudioProcess(event) {
+        console.log('is recording')
+        // 拿到输入buffer Float32Array 
+        let audioBuffer = event.inputBuffer
+        let leftChannelData = audioBuffer.getChannelData(0)
+        // let rightChannelData = audioBuffer.getChannelData(1)
+
+        // 需要克隆一下
+        this.leftDataList.push(leftChannelData.slice(0))
+        //this.rightDataList.push(rightChannelData.slice(0))
+    }
+
+    createJSNode(audioContext) {
+        const BUFFER_SIZE = 4096
+        const INPUT_CHANNEL_COUNT = 1
+        const OUTPUT_CHANNEL_COUNT = 1
+        // createJavaScriptNode已被废弃
+        let creator = audioContext.createScriptProcessor || audioContext.createJavaScriptNode
+        creator = creator.bind(audioContext)
+        return creator(BUFFER_SIZE, INPUT_CHANNEL_COUNT, OUTPUT_CHANNEL_COUNT)
+    }
+
+    playRecord(arrayBuffer) {
+        let blob = new Blob([new Int8Array(arrayBuffer)], {
+            type: 'audio/mp3' // files[0].type
+        })
+        let blobUrl = URL.createObjectURL(blob)
+        this.source = blob
+        this.blobUrl = blobUrl
+        // document.querySelector('.audio-node').src = blobUrl
+        return blobUrl
+    }
+    /*MARK:3.停止录音并处理
+    1.单声道数据转成Float32Array
+    2.根据设定输出采样压缩
+    3.输出文件
+    4.重置录音*/
+
+    stopRecord() {
+
+        this.log('录音结束，MP3导出中...');
+        this.getMp3Bole(this.source)
+        this.leftDataList = []
+        this.rightDataList = []
+        this.audioContext.close()
+        this.mediaPlayer.getAudioTracks().forEach(track => {
+            track.stop()
+            this.mediaPlayer.removeTrack(track)
+        })
+
+        return source
+    }
+    getMp3Bole(blob) {
+        // 停止录音
+        let leftData = this.mergeArray(this.leftDataList)
+        //let rightData = this.mergeArray(this.rightDataList)
+        let allData = this.interSingleData(leftData)
+        let wavBuffer = this.createWavFile(allData)
+
+        let source = this.playRecord(wavBuffer)
+        this.log('MP3导出成功');
+        
+           
+        let mp3Blob = blob;
+        let url = URL.createObjectURL(mp3Blob);
+        let div = document.createElement('div');
+        let au = document.createElement('audio');
+        let hf = document.createElement('a');
+       
+        au.controls = true;
+        au.src = url;
+        hf.href = url;
+        hf.download = new Date().toISOString() + '.mp3';
+        hf.innerHTML = hf.download;
+ 
+        div.appendChild(au);
+        div.appendChild(hf);
+        recordingslist.appendChild(div);
+    }
+    transformArrayBufferToBase64(buffer) {
+        var binary = ''
+        var bytes = new Uint8Array(buffer)
+        for (var len = bytes.byteLength, i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i])
+        }
+        return window.btoa(binary)
+    }
+
+    // 停止控件录音
+    resetRecord() {
+        this.leftDataList = []
+        this.rightDataList = []
+        this.audioContext.close()
+        this.mediaPlayer.getAudioTracks().forEach(track => {
+            track.stop()
+            this.mediaPlayer.removeTrack(track)
+        })
+        this.deleteRecordingsList()
+    }
+    deleteRecordingsList() {
+       
+        var childs = recordingslist.childNodes;
+        for (var i = childs.length - 1; i >= 0; i--) {
+
+            recordingslist.removeChild(childs[i]);
+        }
+    }
+    log(str) {
+        recordingslist.innerHTML += str + '<br/>';
+    }
+    createWavFile(audioData) {
+        let channelCount = 1
+        const WAV_HEAD_SIZE = 44
+        const sampleBits = 16
+        let sampleRate = this.sampleRate
+
+        let buffer = new ArrayBuffer(audioData.length * 2 + WAV_HEAD_SIZE)
+        // 需要用一个view来操控buffer
+        let view = new DataView(buffer)
+        // 写入wav头部信息
+        // RIFF chunk descriptor/identifier
+        this.writeUTFBytes(view, 0, 'RIFF')
+        // RIFF chunk length
+        view.setUint32(4, 44 + audioData.length * channelCount, true)
+        // RIFF type
+        this.writeUTFBytes(view, 8, 'WAVE')
+        // format chunk identifier
+        // FMT sub-chunk
+        this.writeUTFBytes(view, 12, 'fmt ')
+        // format chunk length
+        view.setUint32(16, 16, true)
+        // sample format (raw)
+        view.setUint16(20, 1, true)
+        // stereo (2 channels)
+        view.setUint16(22, channelCount, true)
+        // sample rate
+        view.setUint32(24, sampleRate, true)
+        // byte rate (sample rate * block align)
+        view.setUint32(28, sampleRate * 2, true)
+        // block align (channel count * bytes per sample)
+        view.setUint16(32, 2 * 2, true)
+        // bits per sample
+        view.setUint16(34, 16, true)
+        // data sub-chunk
+        // data chunk identifier
+        this.writeUTFBytes(view, 36, 'data')
+        // data chunk length
+        view.setUint32(40, audioData.length * 2, true)
+
+        console.log(view, 'view')
+        let length = audioData.length
+        let index = 44
+        let volume = 1
+        for (let i = 0; i < length; i++) {
+            view.setInt16(index, audioData[i] * (0x7FFF * volume), true)
+            index += 2
+        }
+        return buffer
+    }
+
+    writeUTFBytes(view, offset, string) {
+        var lng = string.length
+        for (var i = 0; i < lng; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i))
+        }
+    }
+    /*MARK:采样率由设备决定，无法更改。如默认44100，即一秒采集44K次，这样数据量会比较大
+    如果采用8000的采样录，数据会减少到1/6
+    由于输出设置为8000，取数据是不能按照顺序取的
+    这个时候需要按比例跳跃取数据 （且数组下标为整数）*/
+
+    interSingleData(left) {
+        var t = left.length;
+        let sampleRate = this.audioContext.sampleRate,
+            outputSampleRate = this.sampleRate
+        sampleRate += 0.0;
+        outputSampleRate += 0.0;
+        var s = 0,
+            o = sampleRate / outputSampleRate,
+            u = Math.ceil(t * outputSampleRate / sampleRate),
+            a = new Float32Array(u);
+        for (let i = 0; i < u; i++) {
+            a[i] = left[Math.floor(s)];
+            s += o;
+        }
+        return a;
+    }
+
+    // 交叉合并左右声道的数据
+    interleaveLeftAndRight(left, right) {
+        let totalLength = left.length + right.length
+        let data = new Float32Array(totalLength)
+        for (let i = 0; i < left.length; i++) {
+            let k = i * 2
+            data[k] = left[i]
+            data[k + 1] = right[i]
+        }
+        return data
+    }
+
+    mergeArray(list) {
+        let length = list.length * list[0].length
+        let data = new Float32Array(length)
+        let offset = 0
+        for (let i = 0; i < list.length; i++) {
+            data.set(list[i], offset)
+            offset += list[i].length
+        }
+        return data
+    }
+
+    // 播放音乐
+    playMusic() {
+        if (!this.value) {
+            return
+        }
+        // 直接使用File对象生成blob url
+        let blobUrl = URL.createObjectURL(this.files[0])
+        document.querySelector('.audio-node').src = blobUrl
+    }
+
+    play(arrayBuffer) {
+        // Safari需要使用webkit前缀
+        let AudioContext = window.AudioContext || window.webkitAudioContext
+        let audioContext = new AudioContext()
+        // 创建一个AudioBufferSourceNode对象，使用AudioContext的工厂函数创建
+        let audioNode = audioContext.createBufferSource()
+        // 解码音频，可以使用Promise，但是较老的Safari需要使用回调
+        audioContext.decodeAudioData(arrayBuffer, function (audioBuffer) {
+            audioNode.buffer = audioBuffer
+            audioNode.connect(audioContext.destination)
+            // 从0s开始播放
+            audioNode.start(0)
+        })
+    }
+}
